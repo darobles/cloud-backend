@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Web</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Parts Store</h1>
+        <div id="cart-info">
+            <span id="cart-count">0</span> items in cart
+            <a href="#" id="view-cart">View Cart</a>
+        </div>
+        <div id="auth-buttons">
+            <button id="login-button">Login</button>
+            <button id="logout-button" style="display: none;">Logout</button>
+        </div>
+    </header>
+    <main>
+        <div id="parts-list"></div>
+        <div id="cart-page" style="display: none;">
+            <h2>Your Cart</h2>
+            <div id="cart-items"></div>
+        </div>
+    </main>
+
+    <div id="login-modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Login</h2>
+            <form id="login-form">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

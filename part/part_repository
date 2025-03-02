@@ -1,0 +1,69 @@
+import psycopg2
+from psycopg2 import sql
+from contextlib import contextmanager
+from configparser import ConfigParser
+
+# Database configuration
+def config(filename='config/database.ini', section='postgresql'):
+    parser = ConfigParser()
+    parser.read(filename)
+
+    db_params = {}
+    if parser.has_section(section):
+        params = parser.items(section)
+        for param in params:
+            db_params[param[0]] = param[1]
+    else:
+        raise Exception(f"Section {section} not found in the {filename} file.")
+    return db_params
+
+@contextmanager
+def get_db_connection():
+    db_params = config()
+    conn = psycopg2.connect(**db_params)
+    try:
+        yield conn
+    finally:
+        conn.close()
+
+def load_parts(user_id):
+    query = sql.SQL("""
+        SELECT part_id, part_name, part_description
+        FROM parts
+        WHERE user_id = %s
+    """)
+    
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query, (user_id,))
+            parts = cursor.fetchall()
+            return parts
+
+def authorize_user(api_key):
+    query = sql.SQL("""
+        SELECT user_id
+        FROM api_keys
+        WHERE api_key = %s
+    """)
+    
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute(query, (api_key,))
+            result = cursor.fetchone()
+            if result:
+                return result[0]
+            else:
+                return None
+
+# Example usage
+def get_user_parts(api_key):
+    user_id = authorize_user(api_key)
+    if user_id:
+        parts = load_parts(user_id)
+        return parts
+    else:
+        return "Unauthorized"
+
+# Example API key
+api_key = 'your_api_key'
+print(get_user_parts(api_key))

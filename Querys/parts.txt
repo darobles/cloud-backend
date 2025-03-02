@@ -1,0 +1,30 @@
+SELECT 
+    LTRIM(RTRIM(part_name)) AS name,              -- Trim white spaces from part_name
+    LTRIM(RTRIM(CAST(part_desc AS NVARCHAR(MAX)))) AS description, -- Trim white spaces from part_desc (ntext)
+    LTRIM(RTRIM(CAST(part_alert AS NVARCHAR(MAX)))) AS alert, -- Trim white spaces from part_alert (text)
+    LTRIM(RTRIM(part_barcode)) AS barcode,        -- Trim white spaces from part_barcode
+    part_price1 as price1,
+    part_price2 as price2,
+    part_price3 as price3,
+    part_price4 as price4,
+    part_price5 as price5,
+    part_price6 as price6,
+    LTRIM(RTRIM(make_dbid)) AS make_dbid,              -- Trim white spaces from make_dbid
+    LTRIM(RTRIM(model_dbid)) AS model_dbid,            -- Trim white spaces from model_dbid
+    LTRIM(RTRIM(part_dbid)) AS part_dbid,              -- Trim white spaces from part_dbid
+    model_id,
+    LTRIM(RTRIM(part_submodel)) AS submodel,      -- Trim white spaces from part_submodel
+    LTRIM(RTRIM(part_othermodel)) AS othermodel,  -- Trim white spaces from part_othermodel
+    created,
+    updated,
+    deleted,
+    picture,
+    part_new,
+    special,
+    part_old,
+    part_perf,
+    part_stocklevel,
+    committedlevel,
+    showmemberonly
+FROM 
+    dbo.tbl_parts;

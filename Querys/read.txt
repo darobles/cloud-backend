@@ -1,0 +1,7 @@
+use unicode when export
+change codification in notepad++
+replace (\d),(\d) with \1.\2 to change commas for dots in prices
+replace " with nothing
+
+run this, file must be in public 
+COPY part_apinz FROM 'C:\Users\Public\part66.csv' WITH (FORMAT csv, HEADER true, DELIMITER ';')
