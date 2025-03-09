@@ -20,18 +20,17 @@ app.register_blueprint(users_bp)
 app.register_blueprint(cart_bp)
 app.register_blueprint(products_bp)
 app.register_blueprint(misc_bp)
-CORS(app, resources={r'/*': {'origins': 'http://127.0.0.1:4200', 'supports_credentials': True}})
+CORS(app, resources={r'/*': {'origins': '*', 'supports_credentials': True}})
 
 # Enable CORS with dynamic origin
 @app.after_request
 def after_request(response):
     origin = request.headers.get('Origin')
-    if origin and origin in ['http://localhost:4200', 'http://localhost:5000', 'http://localhost']:
-        response.headers['Access-Control-Allow-Origin'] = origin
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        response.headers['Access-Control-Allow-Methods'] = 'POST,PUT, OPTIONS, GET, DELETE'  # Add allowed methods
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'  # Add 
+    response.headers['Access-Control-Allow-Origin'] = origin
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
+    response.headers['Access-Control-Allow-Methods'] = 'POST,PUT, OPTIONS, GET, DELETE'  # Add allowed methods
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'  # Add 
     return response
 
 @app.route('/api/login', methods=['OPTIONS'])
