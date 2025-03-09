@@ -7,7 +7,7 @@ from flask_cors import CORS, cross_origin
 import os
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Dota0345!@localhost:5433/pet_store'  # Update with your database URI
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://drobles:Nosoytanweon123!@innova-db.postgres.database.azure.com:5432/pet_store'  # Update with your database URI
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'apinz2025'  # Change this to a random secret key
 app.config['SECRET_KEY'] = os.urandom(24)  # Secret key for session management
