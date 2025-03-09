@@ -5,17 +5,43 @@ from werkzeug.security import generate_password_hash
 from models import db, ViewUser, User
 from . import users_bp
 import jwt
+from flask_cors import CORS
+
+
+CORS(users_bp, supports_credentials=True)
+
+@users_bp.after_request
+def after_request(response):
+    origin = request.headers.get('Origin')
+    if origin and origin in ['http://localhost', 'http://localhost:5000']:
+        response.headers['Access-Control-Allow-Origin'] = origin
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'
+        response.headers['Access-Control-Allow-Methods'] = 'POST, OPTIONS, GET, DELETE, PUT'
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+    return response
+
+
+@users_bp.route('/api/users', methods=['GET'])
+def get_users():    
+    users = ViewUser.query.all()
+    users_list = [user.to_dict() for user in users]  # Convert each user to a dictionary
+    return users_list, 201
 
 @users_bp.route('/api/users', methods=['POST'])
-@jwt_required()
 def create_user():
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    if User.query.filter_by(username=username).first():
-        return jsonify({"msg": "Username already exists"}), 400
-    new_user = User(username=username, password=generate_password_hash(password))
-    db.session.add(new_user)
+    user = User(
+        username = data.get('username'),
+        name = data.get('name'),
+        email = data.get('email'),
+        address = data.get('address'),
+        city = data.get('city'),
+        country =  data.get('country'),
+        post =  data.get('post'),
+        role_id =  data.get('role_id'),
+        password = generate_password_hash(data.get('password'))
+    )
+    db.session.add(user)
     db.session.commit()
     return jsonify({"msg": "User created successfully"}), 201
 
@@ -33,15 +59,22 @@ def delete_user(user_id):
 @jwt_required()
 def update_user(user_id):
     user = User.query.get(user_id)
+    print(user)
     if not user:
         return jsonify({"msg": "User not found"}), 404
+    username = user.username
     data = request.get_json()
-    username = data.get('username')
-    password = data.get('password')
-    if username:
-        user.username = username
-    if password:
-        user.password = generate_password_hash(password)
+    user.name = data.get('name', user.name)
+    [print(data.get(key)) for key in data.keys()]
+    user.email = data.get('email', user.email)
+    user.address = data.get('address', user.address)
+    user.city = data.get('city', user.city)
+    user.country =  data.get('country', user.country)
+    user.post =  data.get('post', user.post)
+    user.role_id =  data.get('role_id', user.role_id)
+    user.password = user.password 
+    if data.get('password') != user.password:
+        user.password = generate_password_hash(data.get('password'))
     db.session.commit()
     return jsonify({"msg": "User updated successfully"}), 200
 
@@ -54,15 +87,6 @@ def get_user():
     user = User.query.filter_by(username=user_id).first()
     if not user:
         return jsonify({"msg": "User not found"}), 404
-
-    user_data = {
-        "username": user.username,
-        "email": user.email,
-        "phone": '12312313132',
-        "firstName": user.name,
-        "lastName": user.headoffice,
-        "avatar": '//www.gravatar.com/avatar/bde30b7dd579b3c9773f80132523b4c3?d=mp&s=88'
-        }
+    user_data = user.to_dict()
 
     return jsonify(user_data), 200
-    return jsonify({"msg": "User updated successfully"}), 200

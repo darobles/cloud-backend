@@ -2,7 +2,8 @@
 from flask import Blueprint
 
 users_bp = Blueprint('users', __name__)
-parts_bp = Blueprint('parts', __name__)
 cart_bp = Blueprint('cart', __name__)
+products_bp = Blueprint('products', __name__)
+misc_bp = Blueprint('misc', __name__)
 
-from . import users, parts, cart
+from . import users, cart, products, misc
