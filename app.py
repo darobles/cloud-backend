@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request, session
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity, verify_jwt_in_request
 from werkzeug.security import check_password_hash, generate_password_hash
 from models import db, User  # Ensure models.py contains the User model and db instance
 from blueprints import users_bp, cart_bp, products_bp, misc_bp
@@ -8,6 +8,7 @@ import os
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://drobles:Nosoytanweon123!@innova-db.postgres.database.azure.com:5432/pet_store'  # Update with your database URI
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:Dota0345!@localhost:5433/pet_store'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['JWT_SECRET_KEY'] = 'apinz2025'  # Change this to a random secret key
 app.config['SECRET_KEY'] = os.urandom(24)  # Secret key for session management
@@ -32,6 +33,15 @@ def after_request(response):
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization'  # Add 
     return response
+
+@app.route('/api/alive', methods=['GET'])
+def check_token():
+    verify_jwt_in_request(optional=True)
+    current_user = get_jwt_identity()
+    if current_user is not None:
+        return jsonify(current_user), 200
+    return jsonify({"msg": "Bad username or password"}), 401
+    
 
 @app.route('/api/login', methods=['OPTIONS'])
 def handle_options():

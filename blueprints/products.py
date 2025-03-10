@@ -41,11 +41,12 @@ def options_product(product_id):
 def get_products():
     verify_jwt_in_request(optional=True)
     current_user = get_jwt_identity()
+    '''
     if current_user:
         user = User.query.filter_by(username=current_user).first()
         if not user:
             return jsonify({"error": "User not found"}), 404
-
+    '''
     products = ProductView.query.all()
     product = [p.to_dict() for p in products]
     print(len(products))
@@ -56,11 +57,12 @@ def get_products_test():
     verify_jwt_in_request(optional=True)
     current_user = get_jwt_identity()
     print(current_user)
+    '''
     if current_user:
         user = User.query.filter_by(username=current_user).first()
         if not user:
             return jsonify({"error": "User not found"}), 404
-            
+    '''        
     products = ProductView.query.all()
     product = [p.to_dict() for p in products]
     return product, 200
