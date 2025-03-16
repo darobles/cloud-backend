@@ -7,6 +7,8 @@ from decimal import Decimal
 from flask_cors import CORS
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, ContentSettings
 import configparser
+import boto3
+import mimetypes
 
 CORS(products_bp, supports_credentials=True)
 
@@ -16,6 +18,13 @@ def get_azure_config():
     return {
         'connection_string': config['azure']['CONNECTION_STRING'],
         'container_name': config['azure']['CONTAINER_NAME']
+    }
+
+def get_aws_config():
+    config = configparser.ConfigParser()
+    config.read('config/aws.ini')
+    return {
+        'bucket_name': config['aws']['BUCKET_NAME'],
     }
 
 @products_bp.after_request
@@ -134,7 +143,7 @@ def delete_product(product_id):
         db.session.rollback()
         abort(400, description=str(e))
 
-def uploadfile(file):
+def uploadfileazure(file):
     azure_config = get_azure_config()
     blob_service_client = BlobServiceClient.from_connection_string(azure_config['connection_string'])
     container_client = blob_service_client.get_container_client(azure_config['container_name'])
@@ -146,3 +155,32 @@ def uploadfile(file):
     file_url = blob_client.url
     print(f"✅ File uploaded: {file_url}")
     return file_url
+
+def uploadfile(file):
+    aws_config = get_aws_config()
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id='AKIAQHVHBA5CAJH64R5F',
+        aws_secret_access_key='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'
+    )
+    try:
+        bucket_name = aws_config['bucket_name']
+        content_type = file.content_type or mimetypes.guess_type(file.filename)[0] or 'application/octet-stream'
+        
+        # Upload directly from file object
+        s3_client.upload_fileobj(
+            file,
+            bucket_name,
+            file.filename,
+            ExtraArgs={
+                'ContentType': content_type
+            }
+        )
+        
+        region = s3_client.get_bucket_location(Bucket=bucket_name)['LocationConstraint']
+        public_url = f"https://{bucket_name}.s3.{region}.amazonaws.com/{file.filename}"
+        print(f"Public URL: {public_url}")
+        return public_url
+    except Exception as e:
+        print(f"Failed to upload {file}: {e}")
+        return None
