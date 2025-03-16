@@ -9,6 +9,7 @@ from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, C
 import configparser
 import boto3
 import mimetypes
+import os
 
 CORS(products_bp, supports_credentials=True)
 
@@ -156,12 +157,12 @@ def uploadfileazure(file):
     print(f"✅ File uploaded: {file_url}")
     return file_url
 
-def uploadfile(file):
+def uploadfile(file, access_key_id, secret_access_key):
     aws_config = get_aws_config()
     s3_client = boto3.client(
         's3',
-        code1='',
-        code2=''
+        aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
+        aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY")
     )
     try:
         bucket_name = aws_config['bucket_name']
