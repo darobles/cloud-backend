@@ -21,12 +21,6 @@ def get_azure_config():
         'container_name': config['azure']['CONTAINER_NAME']
     }
 
-def get_aws_config():
-    config = configparser.ConfigParser()
-    config.read('config/aws.ini')
-    return {
-        'bucket_name': config['aws']['BUCKET_NAME'],
-    }
 
 @products_bp.after_request
 def after_request(response):
@@ -165,7 +159,7 @@ def uploadfile(file, access_key_id, secret_access_key):
         aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY")
     )
     try:
-        bucket_name = aws_config['bucket_name']
+        bucket_name = 'innovatech-s3'
         content_type = file.content_type or mimetypes.guess_type(file.filename)[0] or 'application/octet-stream'
         
         # Upload directly from file object
