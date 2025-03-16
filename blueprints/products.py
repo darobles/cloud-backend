@@ -151,12 +151,11 @@ def uploadfileazure(file):
     print(f"✅ File uploaded: {file_url}")
     return file_url
 
-def uploadfile(file, access_key_id, secret_access_key):
-    aws_config = get_aws_config()
+def uploadfile(file):
     s3_client = boto3.client(
         's3',
         aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
-        aws_secret_access_key= os.getenv("AWS_SECRET_ACCESS_KEY")
+        aws_secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY")
     )
     try:
         bucket_name = 'innovatech-s3'
