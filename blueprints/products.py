@@ -160,8 +160,8 @@ def uploadfile(file):
     aws_config = get_aws_config()
     s3_client = boto3.client(
         's3',
-        aws_access_key_id='',
-        aws_secret_access_key=''
+        code1='',
+        code2=''
     )
     try:
         bucket_name = aws_config['bucket_name']
