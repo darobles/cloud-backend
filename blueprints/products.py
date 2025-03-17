@@ -138,7 +138,7 @@ def delete_product(product_id):
         db.session.rollback()
         abort(400, description=str(e))
 
-def uploadfilea(file):
+def uploadfile(file):
     azure_config = get_azure_config()
     blob_service_client = BlobServiceClient.from_connection_string(azure_config['connection_string'])
     container_client = blob_service_client.get_container_client(azure_config['container_name'])
