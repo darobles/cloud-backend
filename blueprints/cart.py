@@ -21,6 +21,7 @@ def get_or_create_public_cart():
         db.session.add(public_cart)
         db.session.commit()
         session['public_cart_id'] = public_cart.id
+        print(session['public_cart_id'])
     else:
         print("Found public_cart_id")
         public_cart = PublicCart.query.get(session['public_cart_id'])
@@ -28,6 +29,7 @@ def get_or_create_public_cart():
 
 @cart_bp.route('/api/cart', methods=['POST'])
 def add_to_cart():
+    print('call post')
     verify_jwt_in_request(optional=True)
     current_user = get_jwt_identity()
     data = request.get_json()
@@ -61,6 +63,7 @@ def add_to_cart():
             db.session.add(cart_item)
     else:
         public_cart = get_or_create_public_cart()
+        print(public_cart.id)
         cart_item = PublicCartItems.query.filter_by(product_id=product_id, public_cart_id=public_cart.id).first()
         if cart_item:
             cart_item.quantity += quantity
@@ -69,7 +72,7 @@ def add_to_cart():
                 public_cart_id=public_cart.id,
                 product_id=product.id,
                 quantity=quantity,
-                price=product.price  # Default price, you can adjust based on user category if needed
+                price=product.price
             )
             db.session.add(cart_item)
     db.session.commit()
@@ -140,7 +143,8 @@ def update_cart_item(product_id):
     print(current_user)
     data = request.get_json()
     quantity = data.get('quantity')
-    if current_user:
+    
+    if current_user: 
         user = User.query.filter_by(username=current_user).first()
         print(user)
         if not user:
