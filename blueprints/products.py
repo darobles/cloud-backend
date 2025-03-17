@@ -138,7 +138,7 @@ def delete_product(product_id):
         db.session.rollback()
         abort(400, description=str(e))
 
-def uploadfileazure(file):
+def uploadfilea(file):
     azure_config = get_azure_config()
     blob_service_client = BlobServiceClient.from_connection_string(azure_config['connection_string'])
     container_client = blob_service_client.get_container_client(azure_config['container_name'])
@@ -151,7 +151,7 @@ def uploadfileazure(file):
     print(f"✅ File uploaded: {file_url}")
     return file_url
 
-def uploadfile(file):
+def uploadfileaws(file):
     s3_client = boto3.client(
         's3',
         aws_access_key_id= os.getenv("AWS_ACCESS_KEY_ID"),
